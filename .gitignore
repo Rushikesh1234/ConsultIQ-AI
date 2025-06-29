@@ -1,4 +1,13 @@
-.env
+
 Chroma_Indexes/
-__pycache__/
+
+.env
+.envrc
+.venv/
 venv/
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+.DS_Store
