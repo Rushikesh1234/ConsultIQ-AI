@@ -25,6 +25,7 @@ def chunk_documents(documents, chunk_size=1000, chunk_overlap=100):
     return splitter.split_documents(documents)
 
 def create_vector_store(chunks, store_path="Chroma_Indexes"):
+    os.makedirs(store_path, exist_ok=True)
     vectordb = Chroma.from_documents(chunks, embedding_model, persist_directory=store_path)
     print(f"✅ Chroma vector store saved to {store_path}")
 

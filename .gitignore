@@ -1,1 +1,4 @@
 .env
+Chroma_Indexes/
+__pycache__/
+venv/
