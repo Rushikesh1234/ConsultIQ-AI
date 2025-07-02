@@ -35,8 +35,8 @@ You upload internal strategy PDFs → AI agents scan + understand them → You a
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/yourname/consultiq-ai.git
-cd consultiq-ai
+git clone https://github.com/Rushikesh1234/ConsultIQ-AI.git
+cd ConsultIQ-AI
 ```
 
 ### 2. Install Dependencies
@@ -87,8 +87,8 @@ Then open: [http://localhost:8501](http://localhost:8501)
 ```
 ├── app.py                  # Streamlit frontend app
 ├── agent_tools.py          # Tools used by the multi-agent pipeline
-├── agent_runner.py         # Agent definition and orchestration
 ├── model_prompt.py         # Custom prompt for RAG
+├── data_ingestor.py        # Data Ingestor to for converting PDFs docuements to embedding vedtors
 ├── Chroma_Indexes/         # Saved vector DB
 ├── static/                 # PDF viewer support
 └── .env                    # API Key (excluded from version control)
@@ -101,6 +101,18 @@ Then open: [http://localhost:8501](http://localhost:8501)
 - "What’s PwC’s strategy for automotive sector?"
 - "Summarize M&A guidelines from the internal policy doc"
 - "Generate a client-ready strategy based on these regulations"
+
+---
+
+## ▶️ Demo Video
+![ConsultIQ Demo](/demo/demo%20video.gif)
+
+---
+
+---
+
+## 🖥️ Screenshots
+![ConsultIQ Screenshots](/demo/ss2.png)
 
 ---
 
