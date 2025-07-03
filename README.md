@@ -105,7 +105,7 @@ Then open: [http://localhost:8501](http://localhost:8501)
 ---
 
 ## ▶️ Demo Video
-![ConsultIQ Demo](/demo/demo%20video.gif)
+![ConsultIQ Demo](/demo/demo%20video.mp4)
 
 ---
 
