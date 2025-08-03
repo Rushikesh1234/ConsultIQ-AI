@@ -115,7 +115,7 @@ Then open: [http://localhost:8501](http://localhost:8501)
 ---
 
 ## ▶️ Multi-Agent Demo Video
-[Watch the video](/demo/multi-agentmodel.gif)
+![Watch the video](/demo/multi-agentmodel.gif)
 
 ---
 
