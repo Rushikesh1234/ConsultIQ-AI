@@ -4,7 +4,7 @@ ConsultIQ is an AI-powered document question-answering app, built for consulting
 
 ---
 
-## 💡 How It Works (in 1-minute story)
+## 💡 How It Works
 
 You upload internal strategy PDFs → AI agents scan + understand them → You ask a question → Agents collaborate (search, summarize, strategize) → You get a clear business-style answer with document sources.
 

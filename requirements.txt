@@ -1,6 +1,9 @@
 langchain
+langchain-community
+langchain_chroma
 openai
 faiss-cpu
 python-dotenv
 PyMuPDF
 streamlit
+tavily-python

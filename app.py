@@ -7,12 +7,15 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.llms import OpenAI
 from langchain.chains import RetrievalQA
 from langchain.chains import RetrievalQAWithSourcesChain
+from langchain_community.tools.tavily_search import TavilySearchResults
 from model_prompt import custom_prompt
 from langchain.agents import Tool, initialize_agent, AgentType
 from agent_tools import search_docs, summarize_text, format_strategy
+from langchain.memory import ConversationBufferMemory
 
 load_dotenv()
 openai_key = os.getenv("OPENAI_API_KEY")
+tavily_key = os.getenv("TAVILY_API_KEY")
 
 @st.cache_resource
 def get_models():
@@ -44,6 +47,7 @@ def copy_to_static_folder(source_path):
         shutil.copy(source_path, static_folder_path)
     return static_folder_path
 
+@st.cache_resource
 def get_agent():
     llm = OpenAI(
         temperature=0,
@@ -68,33 +72,39 @@ def get_agent():
             description="Takes bullet points from Summarize and turns them into a formal multi-paragraph strategic answer."
         )
     ]
+
+    memory = ConversationBufferMemory(
+        memory_key="chat_history",
+        return_messages=True
+    )
     
     agent = initialize_agent(
         tools=tools, 
         llm=llm, 
-        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION
+        agent_type=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+        memory=memory,
+        verbose=True
     )
     return agent
 
 def main():
     st.set_page_config(page_title="ConsultIQ", layout="wide")
     st.title("ConsultIQ – Skip the Docs. Get the Answers.")
-    query = st.text_input("Ask question about the documents: ", placeholder="Type a question… e.g., “How does PwC approach the automotive sector?")
 
     st.subheader("Choose a model:")
-    col1, col2 = st.columns(2)
 
-    with col1:
-        if st.button("🔧 Simple Model"):
-            st.session_state["selected_model"] = "simple"
-    with col2:
-        if st.button("🔬 Multi-Agent AI Model"):
-            st.session_state["selected_model"] = "multi-agent"
+    model_option = st.radio(
+        "Select a model to use:",
+        ["simple", "multi-agent"],
+        format_func = lambda x: "🔧 Simple Model" if x == "simple" else "🔬 Multi-Agent AI Model",
+        index=0,
+        key="selected_model"
+    )
 
-    selected_model = st.session_state.get("selected_model", None)
-
-    if selected_model == "simple":
+    if model_option == "simple":
         st.markdown("### 🔧 Simple Model Mode")
+
+        query = st.text_input("Ask question about the documents: ", placeholder="Type a question… e.g., “How does PwC approach the automotive sector?")
 
         embeddings, vectordb, qa_chain = get_models()
 
@@ -158,13 +168,56 @@ def main():
         if st.session_state["has_queried"] and st.session_state["search_results"] is None and st.session_state["answer"] is None:
             st.info("No relevant documents found. ConsultIQ Model won't be able to generate results for you.")
     
-    elif selected_model == "multi-agent":
+    elif model_option == "multi-agent":
         st.markdown("### 🔬 Multi-Agent AI Model")
 
-        with st.spinner("🧠 Multi-agent agents collaborating..."):
-            agent = get_agent()
-            result = agent.run(f"Create a strategic analysis based on internal documents for: '{query}'")
-            st.markdown(result)
+        if "chat_history" not in st.session_state:
+            st.session_state["chat_history"] = []
+
+        if "use_internet" not in st.session_state:
+            st.session_state["use_internet"] = False
+
+        with st.container():
+            cols = st.columns([0.9, 0.1])
+            with cols[1]:
+                st.session_state["use_internet"] = st.toggle("🌐", help="Use Internet along with internal documents")
+
+        for chat in st.session_state["chat_history"]:
+            st.chat_message("user").markdown(chat["user"])
+            st.chat_message("ai").markdown(chat["ai"])
+
+        query = st.chat_input("Ask question about the documents")
+
+        if query:
+            st.chat_message("user").markdown(query)
+
+            with st.spinner("🧠 Multi-agent agents collaborating..."):
+
+                history_prompt = ""
+                for chat in st.session_state["chat_history"][:5]:
+                    history_prompt += f"User: {chat['user']}\nAI: {chat['ai']}\n"
+                
+                internet_result = ""
+                if st.session_state["use_internet"]:
+                    search_tool = TavilySearchResults()
+                    internet_result = sorted(search_tool(query), key=lambda x: x['score'], reverse=True)[:3]
+                    internet_result = summarize_text(internet_result)
+                    
+                agent = get_agent()
+                result = agent.run(
+    f"""You are an AI consultant analyzing internal documents.
+Conversation history: {history_prompt}
+User question: {query}
+Internet info: {internet_result}
+"""
+                )
+                
+                st.chat_message("ai").markdown(result)
+
+                st.session_state["chat_history"].append({
+                    "user":query,
+                    "ai":result
+                })
 
     else:
         st.markdown("### Please select a model above to get started.")
