@@ -115,7 +115,7 @@ Then open: [http://localhost:8501](http://localhost:8501)
 ---
 
 ## ▶️ Multi-Agent Demo Video
-[Watch the video](/demo/multi-agent model.mp4)
+[Watch the video](https://github.com/Rushikesh1234/ConsultIQ-AI/blob/0dc267c0199dd431de95803c187691c95cd2b927/demo/multi-agent%20model.mp4)
 
 ---
 
