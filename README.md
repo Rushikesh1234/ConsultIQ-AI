@@ -114,11 +114,6 @@ Then open: [http://localhost:8501](http://localhost:8501)
 
 ---
 
-## 🖥️ For Mult-Agent Model
-![Multi-Agent Model](https://github.com/user-attachments/assets/043782f8-feb4-48f6-843b-c966413e9d96)
-
----
-
 ## 🤝 Contribution & Collaboration
 
 This is a learning-focused AI PoC project. PRs welcome!
